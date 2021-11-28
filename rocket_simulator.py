@@ -40,6 +40,13 @@ B_Initial_V = 0
 B_Width = 200
 B_Height = 50
 
+# LaunchePad
+global Pad_X_Coordinate , Pad_Y_Coordinate , Pad_Height , Pad_Width
+Pad_X_Coordinate = 0
+Pad_Y_Coordinate = 0
+Pad_Height = 0
+Pad_Width = 0
+
 # --------------------------------------------------------------
 # Initializes the Simulation
 # --------------------------------------------------------------
@@ -47,6 +54,7 @@ def initialize_simulation(generate_new_scenario):
     initialize_terrain(True)
     initialize_boat(True)
     initialize_rocket(True)
+    initialize_Pad(True)
      
 
 # --------------------------------------------------------------
@@ -79,9 +87,19 @@ def initialize_boat(generate_new_scenario):
 def initialize_rocket(generate_new_scenario):
     global Rocket_X_Coordinate, Rocket_Y_Coordinate, Rocket_X_Velocity, Rocket_Y_Velocity
     Rocket_X_Coordinate = (GROUND_WIDTH / 2) - (Rocket_Width / 2)
-    Rocket_Y_Coordinate = WINDOW_HEIGHT - GROUND_HIEGHT - Rocket_Height
+    Rocket_Y_Coordinate = WINDOW_HEIGHT - GROUND_HIEGHT - Rocket_Height - 18 # 18 is the pad-ground height
     Rocket_X_Velocity = 0.0
     Rocket_Y_Velocity = 0.0
+
+# --------------------------------------------------------------
+# Initializes the Pad
+# --------------------------------------------------------------
+def initialize_Pad(generate_new_scenario):
+    global Pad_X_Coordinate , Pad_Y_Coordinate , Pad_Height , Pad_Width
+    Pad_X_Coordinate = Rocket_X_Coordinate - 50
+    Pad_Y_Coordinate = Rocket_Y_Coordinate - 32 # 32 is the space between ground and pad
+    Pad_Height = 100
+    Pad_Width = 100
 
 
 # --------------------------------------------------------------
@@ -99,7 +117,7 @@ def draw_objects():
     draw_rocket()
     draw_hud()
     draw_boat()
-    
+    draw_pad()
   
 
 # --------------------------------------------------------------
@@ -134,6 +152,12 @@ def draw_boat():
 def draw_rocket():
     draw_image('files/rocket.png',Rocket_X_Coordinate,Rocket_Y_Coordinate,Rocket_Width,Rocket_Height)
 
+# --------------------------------------------------------------
+# Draws the Pad
+# --------------------------------------------------------------
+def draw_pad():
+    #draw_image('files/launchpad.png',Pad_X_Coordinate,Pad_Y_Coordinate,Pad_Width,Pad_Height)
+    draw_image('files/launchpad.png',Pad_X_Coordinate,Pad_Y_Coordinate,Pad_Width,Pad_Height)
 
 # --------------------------------------------------------------
 # Draws the On Screen Text
@@ -192,7 +216,7 @@ pythonGraph.set_window_title("CS110Z (S20) Rocket Simulator - Mahmoud Shawish")
 
 # Initializes the Simulation At Least Once
 initialize_simulation(True)
-    
+
 # Main "Game Loop"
 while pythonGraph.window_not_closed():
     if is_simulation_over() == False:
