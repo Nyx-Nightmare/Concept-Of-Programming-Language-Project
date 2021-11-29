@@ -2,43 +2,44 @@ from tkinter import *
 import tkinter as tk
 import random
 import math
+import time
 
 # width of the animation window
-window_width = 1000
+window_width = 1800
 # height of the animation window
-window_height = 600
+window_height = 800
 # initial x position of the rocket
 rocket_start_xpos = 50
 # initial y position of the rocket
-rocket_start_ypos = 250
+rocket_start_ypos = 350
 # initial x position of the boat
 boat_start_xpos = 500
 # initial y position of the boat
-boat_start_ypos = 350
+boat_start_ypos = 450
 # initial x position of the pad
 pad_start_xpos = 0
 # initial y position of the pad
-pad_start_ypos = 200
+pad_start_ypos = 300
 # the pixel movement of ball for each iteration
 velocity = 0
 # terrain start x
 terrian_start_x = 0
 # terrain start y
-terrian_start_y = 354
+terrian_start_y = 454
 # terrain height
-terrian_height = 210
+terrian_height = 410
 # terrain width
 terrian_width = 211
 # water start x
 water_start_x = 0
 # water start y
-water_start_y = 410
+water_start_y = 510
 # water height
 water_height = 600
 # water width
-water_width = 1000
+water_width = window_width
 # delay between successive frames in seconds
-animation_refresh_seconds = 0.01
+animation_refresh_seconds = 0.16
 # initial angel
 angle = 0
 # gravity
@@ -58,40 +59,46 @@ def CreatCanvas(window):
         a = textArea2.get(1.0, "end-1c")
         velocity = int(v)
         angle = int(a)
+        window.update()
         StartAnimation(window, canvas, velocity, angle)
 
-    def RestSimulation():
-        window.update()
-        rocket_start_xpos = 50
-        rocket_start_ypos = 250
-        boat_start_xpos = 500
-        boat_start_ypos = 350
-        result.config(text="")
-        CreatCanvas(window)
-
     def StartAnimation(window, canvas, v, a):
-        #create image
+
         rocket = PhotoImage(file='files/rocket.png')
         rocketMove = canvas.create_image(rocket_start_xpos, rocket_start_ypos,
-                        anchor=NW, image=rocket)
-        #time 
-        time = 0
-        while time <= 200:
-            #change the x
-            rocket_moveX = v*math.cos(a)
-            #change the y
-            rocket_moveY = (v*math.sin(a)*time - g*math.pow(time, 2)*0.5)
-            #move the image
+                                         anchor=NW, image=rocket)
+        Stime = 0
+        global rocket_moveX, rocket_moveY
+        rocket_moveX = 0
+        rocket_moveY = 0
+        canvasW, canvasH = canvas.size()
+        while (rocket_moveX != boat_start_xpos and rocket_moveY != boat_start_ypos) and (rocket_moveY != water_height):
+            print(Stime)
+            rocket_moveX = int(v*math.cos(a))*Stime
+            rocket_moveY = -int(v*math.sin(a)*Stime - g*math.pow(Stime, 2)*(1/2)) 
             canvas.move(rocketMove, rocket_moveX, rocket_moveY)
-            #update the window
+            time.sleep(animation_refresh_seconds)
             window.update()
-            time += 10
-            #check if the rocket reached the boat
-            if rocket_moveX == boat_start_xpos and rocket_moveY == boat_start_ypos:
+            Stime += 1
+
+        if rocket_moveX == boat_start_xpos and rocket_moveY == boat_start_ypos:
                 result.config(text="SUCCESS")
-                break
-        if time == 200:
+                
+        else:
             result.config(text="FAIL")
+
+    def RestSimulation():
+        
+        global rocket_start_xpos, rocket_start_ypos, boat_start_xpos, boat_start_ypos, rocket_moveX, rocket_moveY
+        rocket_start_xpos = 50
+        rocket_start_ypos = 350
+        boat_start_xpos = 500
+        boat_start_ypos = 450
+        rocket_moveX = 0
+        rocket_moveY = 0
+        result.config(text="")
+        window.update()
+        CreatCanvas(window)
 
     controlPanel = tk.Frame(window)
     controlPanel.grid()
@@ -130,13 +137,12 @@ def CreatCanvas(window):
     reset = tk.Button(controlPanel, text="Reset", command=RestSimulation)
     reset.grid(row=4, column=2)
 
-    canvas = tk.Canvas(window, width=1000, height=600,
-                       highlightthickness=0, relief='ridge')
+    canvas = tk.Canvas(window, width=window_width, height=window_height)
     canvas.configure(bg="gray12")
 
     boat = PhotoImage(file='files/boat.png')
-    
-    boatxpos = random.randint(boat_start_xpos, window_width-100)
+
+    boatxpos = random.randint(terrian_width, window_width-boat_start_xpos)
 
     launchpad = PhotoImage(file='files/launchpad.png')
 
@@ -152,7 +158,6 @@ def CreatCanvas(window):
     canvas.create_rectangle(water_start_x, water_start_y, water_width,
                             water_height+pad_start_ypos,  outline="#00CED1", fill="#00CED1")
     canvas.grid(row=10, columnspan=100)
-
     window.mainloop()
     return canvas
 
