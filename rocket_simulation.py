@@ -9,17 +9,17 @@ window_width = 1800
 # height of the animation window
 window_height = 800
 # initial x position of the rocket
-rocket_start_xpos = 50
+rocket_start_xpos = 100
 # initial y position of the rocket
-rocket_start_ypos = 350
+rocket_start_ypos = 435
 # initial x position of the boat
 boat_start_xpos = 500
 # initial y position of the boat
-boat_start_ypos = 450
+boat_start_ypos = 480
 # initial x position of the pad
-pad_start_xpos = 0
+pad_start_xpos = 100
 # initial y position of the pad
-pad_start_ypos = 300
+pad_start_ypos = 380
 # the pixel movement of ball for each iteration
 velocity = 0
 # terrain start x
@@ -54,9 +54,13 @@ def CreateWindow():
 
 
 def CreatCanvas(window):
+
     def StartSimulation():
+        global boat_start_xpos
         v = textArea.get(1.0, "end-1c")
         a = textArea2.get(1.0, "end-1c")
+        x = boatxpos
+        boat_start_xpos = x
         velocity = int(v)
         angle = int(a)
         window.update()
@@ -71,35 +75,36 @@ def CreatCanvas(window):
         global rocket_moveX, rocket_moveY
         rocket_moveX = 0
         rocket_moveY = 0
-        #gets the size of the canvas
+        # gets the size of the canvas
         canvasW, canvasH = canvas.size()
-        #checks if it hits the boat or the edge of the water 
-        while (rocket_moveX != boat_start_xpos and rocket_moveY != boat_start_ypos) and (rocket_moveY != water_height):
-            print(Stime)
-            rocket_moveX = int(v*math.cos(a))*Stime
-            rocket_moveY = -int(v*math.sin(a)*Stime - g*math.pow(Stime, 2)*(1/2)) 
+        # checks if it hits the boat or the edge of the water
+        print(boat.width())
+        while ((rocket_moveX < (boat_start_xpos - (boat.width() / 2)) or rocket_moveX > (boat_start_xpos + (boat.width() / 2))) and rocket_moveY != boat_start_ypos) and (rocket_moveY < water_start_y):
+            rocket_moveX = abs(int(v*math.cos(a)*Stime))
+            rocket_moveY = -int(v*math.sin(a)*Stime - g *
+                                math.pow(Stime, 2)*(1/2))
             canvas.move(rocketMove, rocket_moveX, rocket_moveY)
             time.sleep(animation_refresh_seconds)
             window.update()
             Stime += 1
 
         if rocket_moveX == boat_start_xpos and rocket_moveY == boat_start_ypos:
-                result.config(text="SUCCESS")
-                
+            result.config(text="SUCCESS")
+
         else:
             result.config(text="FAIL")
 
     def RestSimulation():
-        
+
         global rocket_start_xpos, rocket_start_ypos, boat_start_xpos, boat_start_ypos, rocket_moveX, rocket_moveY
-        rocket_start_xpos = 50
-        rocket_start_ypos = 350
+        rocket_start_xpos = 100
+        rocket_start_ypos = 435
         boat_start_xpos = 500
-        boat_start_ypos = 450
+        boat_start_ypos = 480
         rocket_moveX = 0
         rocket_moveY = 0
         result.config(text="")
-        window.update()
+        canvas.delete('all')
         CreatCanvas(window)
 
     controlPanel = tk.Frame(window)
@@ -150,11 +155,11 @@ def CreatCanvas(window):
 
     rocket = PhotoImage(file='files/rocket.png')
 
-    canvas.create_image(boatxpos, boat_start_ypos, anchor=NW, image=boat)
+    canvas.create_image(boatxpos, boat_start_ypos, anchor=CENTER, image=boat)
     canvas.create_image(rocket_start_xpos, rocket_start_ypos,
-                        anchor=NW, image=rocket)
+                        anchor=S, image=rocket)
     canvas.create_image(pad_start_xpos, pad_start_ypos,
-                        anchor=NW, image=launchpad)
+                        anchor=CENTER, image=launchpad)
     canvas.create_rectangle(terrian_start_x, terrian_start_y, terrian_width,
                             terrian_height+pad_start_ypos,  outline="#00C957", fill="#00C957")
     canvas.create_rectangle(water_start_x, water_start_y, water_width,
