@@ -51,9 +51,9 @@ def animate_ball(window, canvas, xinc, yinc):
         ball_pos = canvas.coords(ball)
         # unpack array to variables
         xl, yl = ball_pos
-        if xl < abs(xinc):
+        if xl < abs(xinc) or xl < xinc:
             xinc = -xinc
-        if yl < abs(yinc):
+        if yl < abs(yinc) or yl < yinc:
             yinc = -yinc
 
 

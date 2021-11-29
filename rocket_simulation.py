@@ -58,7 +58,6 @@ def CreatCanvas(window):
         a = textArea2.get(1.0, "end-1c")
         velocity = int(v)
         angle = int(a)
-        window.update()
         StartAnimation(window, canvas, velocity, angle)
 
     def RestSimulation():
@@ -71,17 +70,23 @@ def CreatCanvas(window):
         CreatCanvas(window)
 
     def StartAnimation(window, canvas, v, a):
-        
+        #create image
         rocket = PhotoImage(file='files/rocket.png')
         rocketMove = canvas.create_image(rocket_start_xpos, rocket_start_ypos,
                         anchor=NW, image=rocket)
+        #time 
         time = 0
         while time <= 200:
+            #change the x
             rocket_moveX = v*math.cos(a)
+            #change the y
             rocket_moveY = (v*math.sin(a)*time - g*math.pow(time, 2)*0.5)
+            #move the image
             canvas.move(rocketMove, rocket_moveX, rocket_moveY)
+            #update the window
             window.update()
             time += 10
+            #check if the rocket reached the boat
             if rocket_moveX == boat_start_xpos and rocket_moveY == boat_start_ypos:
                 result.config(text="SUCCESS")
                 break
@@ -147,6 +152,7 @@ def CreatCanvas(window):
     canvas.create_rectangle(water_start_x, water_start_y, water_width,
                             water_height+pad_start_ypos,  outline="#00CED1", fill="#00CED1")
     canvas.grid(row=10, columnspan=100)
+
     window.mainloop()
     return canvas
 
