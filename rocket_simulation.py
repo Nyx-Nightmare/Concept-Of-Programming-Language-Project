@@ -71,7 +71,9 @@ def CreatCanvas(window):
         global rocket_moveX, rocket_moveY
         rocket_moveX = 0
         rocket_moveY = 0
+        #gets the size of the canvas
         canvasW, canvasH = canvas.size()
+        #checks if it hits the boat or the edge of the water 
         while (rocket_moveX != boat_start_xpos and rocket_moveY != boat_start_ypos) and (rocket_moveY != water_height):
             print(Stime)
             rocket_moveX = int(v*math.cos(a))*Stime
